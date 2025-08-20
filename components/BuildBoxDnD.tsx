@@ -1,6 +1,6 @@
 
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
 
 type Flavor = { id: string; name: string; };
@@ -16,7 +16,9 @@ export type BuildBoxProps = {
  *  Click en slot = quitar.
  */
 export default function BuildBoxDnD({ size, flavors, initial, onChange }: BuildBoxProps) {
-  const [slots, setSlots] = useState<(string|null)[]>(() => {
+  const [slots, setSlots] = useState<(string|null)[]>([]);
+
+  useEffect(() => {
     const arr = Array(size).fill(null);
     if (initial) {
       let idx = 0;
@@ -24,8 +26,9 @@ export default function BuildBoxDnD({ size, flavors, initial, onChange }: BuildB
         for (let i=0;i<qty;i++) { if (idx < arr.length) arr[idx++] = id; }
       });
     }
-    return arr;
-  });
+    setSlots(arr);
+    notify(arr);
+  }, [size, initial]);
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>, index: number) {
     e.preventDefault();
