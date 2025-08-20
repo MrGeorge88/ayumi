@@ -1,7 +1,8 @@
 
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BuildBoxDnD from '@/components/BuildBoxDnD';
+import OfferBanner from '@/components/OfferBanner';
 
 type Flavor = { id: string; name: string; };
 const mockFlavors: Flavor[] = [
@@ -18,6 +19,18 @@ export default function Suscripciones({ searchParams }: any) {
   const [size, setSize] = useState(initialPlan);
   const [freq, setFreq] = useState<'semanal'|'quincenal'|'mensual'>('semanal');
   const [box, setBox] = useState<Record<string, number>>({});
+  const [referral, setReferral] = useState('');
+
+  useEffect(() => {
+    const stored = localStorage.getItem('referralCode') || '';
+    setReferral(stored);
+  }, []);
+
+  function handleReferralChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setReferral(value);
+    localStorage.setItem('referralCode', value);
+  }
 
   const remaining = useMemo(() => size - Object.values(box).reduce((a,b)=>a+b,0), [box, size]);
   function checkout() {
@@ -27,6 +40,7 @@ export default function Suscripciones({ searchParams }: any) {
 
   return (
     <div className="space-y-8">
+      <OfferBanner />
       <h1 className="text-2xl font-bold">Suscripción AYUMI</h1>
       <section className="grid md:grid-cols-4 gap-4">
         {[6,9,12].map(n => (
@@ -47,6 +61,17 @@ export default function Suscripciones({ searchParams }: any) {
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="rounded-xl p-4 shadow-card bg-white">
+        <label className="font-semibold mb-2 block">Tengo código de referido</label>
+        <input
+          type="text"
+          value={referral}
+          onChange={handleReferralChange}
+          placeholder="Ingresa tu código"
+          className="border rounded-lg2 px-3 py-2 w-full"
+        />
       </section>
 
       <section className="rounded-xl p-4 shadow-card bg-white">
