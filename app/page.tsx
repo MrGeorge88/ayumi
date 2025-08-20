@@ -1,7 +1,10 @@
 
+import OfferBanner from '@/components/OfferBanner';
+
 export default function Home() {
   return (
     <div className="space-y-10">
+      <OfferBanner />
       <section className="rounded-lg2 shadow-card bg-yogurt p-8">
         <h1 className="text-3xl font-bold mb-2">Yogurt griego AYUMI: alto en proteína, endulzado con alulosa.</h1>
         <p className="text-lg">Suscríbete, elige sabores y recibe en frío. Sin conservantes. Con probióticos.</p>
