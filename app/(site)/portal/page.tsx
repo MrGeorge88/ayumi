@@ -1,12 +1,41 @@
 
 'use client';
 import { useState } from 'react';
+
 export default function Portal() {
-  const [status,setStatus]=useState<'active'|'paused'>('active');
-  const nextDate = '2025-09-01'; // mock
-  function pause(){ setStatus('paused'); /* TODO: POST /api/subscriptions/pause */ }
-  function resume(){ setStatus('active'); /* TODO: POST /api/subscriptions/pause */ }
-  function skip(){ alert('Entrega saltada (demo)'); /* TODO: POST /api/subscriptions/skip */ }
+  // TODO: obtener datos reales de la suscripción actual
+  const subscriptionId = 'demo-subscription';
+  const [status, setStatus] = useState<'active' | 'paused'>('active');
+  const [nextDate, setNextDate] = useState('2025-09-01'); // mock inicial
+
+  async function pause() {
+    await fetch('/api/subscriptions/pause', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscriptionId, action: 'pause' }),
+    });
+    setStatus('paused');
+  }
+
+  async function resume() {
+    await fetch('/api/subscriptions/pause', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscriptionId, action: 'resume' }),
+    });
+    setStatus('active');
+  }
+
+  async function skip() {
+    const res = await fetch('/api/subscriptions/skip', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscriptionId }),
+    });
+    const data = await res.json();
+    if (data.next_renewal_date) setNextDate(data.next_renewal_date);
+    alert('Entrega saltada');
+  }
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Mi suscripción</h1>
